@@ -54,10 +54,10 @@ app.get('/:model/:macKey', async (req, res) => {
     console.log(`from collection: ${model} delete macKey: ${macKey} with params ${JSON.stringify(req.params)}`)
     await db.collection(model).set(macKey, req.body)
     const items = await db.collection(model).list()
-    console.log(items.items.results.length)
+    // console.log(items.items.results.length)
   
     console.log(JSON.stringify(item, null, 2))
-    res.json({ macCount: items.items.results.length, macKey }).end()  
+    res.json({ macCount: items.length, macKey }).end()  
   }
 })
 
@@ -67,8 +67,8 @@ app.get('/:model', async (req, res) => {
 
   console.log(`list collection: ${model} with params: ${JSON.stringify(req.params)}`)
   const items = await db.collection(model).list()
-  console.log(items.items.results.length)
-  res.json({ macCount: items.items.results.length, items }).end()
+  // console.log(items.items.results.length)
+  res.json({ macCount: items.length, items }).end()
 })
 
 // Catch all handler for all other request.
