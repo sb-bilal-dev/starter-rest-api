@@ -35,7 +35,7 @@ app.get("/", async (req, res) => {
         await collection.set(`${model}_${mac_address}`, { model, mac_address });
 
         // Get the updated count of mac addresses for the model
-        const items = await collection.list();
+        const items = await collection.scan().exec();
         const quantity = items.filter((item) => item.model === model).length;
 
         // Send a response indicating successful storage
@@ -53,7 +53,6 @@ app.get("/", async (req, res) => {
   }
 });
 
-
 app.get("/count", async (req, res) => {
   const { model } = req.query;
 
@@ -62,8 +61,8 @@ app.get("/count", async (req, res) => {
 
     try {
       // Count the number of mac_addresses for the model
-      const items = await collection.list();
-      const quantity = items.filter(item => item.model === model).length;
+      const items = await collection.scan().exec();
+      const quantity = items.filter((item) => item.model === model).length;
       res.status(200).send(quantity.toString());
     } catch (err) {
       console.error("Failed to retrieve the count:", err);
@@ -73,6 +72,7 @@ app.get("/count", async (req, res) => {
     res.status(400).send("Provide model.\n");
   }
 });
+
 
 app.get("/delete_all", async (_, res) => {
   const collection = dynamoDB.collection("automobiles");
