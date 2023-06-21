@@ -34,9 +34,12 @@ app.get("/", async (req, res) => {
         // Store the mac_address in the database
         await collection.set(`${model}_${mac_address}`, { model, mac_address });
 
+        // Get the updated count of mac addresses for the model
+        const items = await collection.list();
+        const quantity = items.filter((item) => item.model === model).length;
+
         // Send a response indicating successful storage
-        const quantity = await collection.list();
-        var responseBody = `Successfully stored mac_address "${mac_address}", #${quantity} for model "${model}".\n`;
+        const responseBody = `Successfully stored mac_address "${mac_address}", #${quantity} for model "${model}".\n`;
         res.status(200).send(responseBody);
         console.log(responseBody);
       }
@@ -49,6 +52,7 @@ app.get("/", async (req, res) => {
     res.status(400).send("Invalid request.\n");
   }
 });
+
 
 app.get("/count", async (req, res) => {
   const { model } = req.query;
