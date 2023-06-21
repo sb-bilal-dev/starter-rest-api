@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const db = require('@cyclic.sh/dynamodb')
+const dynamoDB = require('@cyclic.sh/dynamodb')
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -18,47 +18,70 @@ app.use(express.urlencoded({ extended: true }))
 // }
 // app.use(express.static('public', options))
 // #############################################################################
+app.get("/", async (req, res) => {
+  const { model, mac_address } = req.query;
 
-// Create or Update an item
-app.post('/:col/:key', async (req, res) => {
-  console.log(req.body)
+  if (model && mac_address) {
+    const collection = dynamoDB.collection("automobiles");
 
-  const col = req.params.col
-  const key = req.params.key
-  console.log(`from collection: ${col} delete key: ${key} with params ${JSON.stringify(req.params)}`)
-  const item = await db.collection(col).set(key, req.body)
-  console.log(JSON.stringify(item, null, 2))
-  res.json(item).end()
-})
+    try {
+      // Check if the mac_address already exists for the model
+      const existingData = await collection.get(`${model}_${mac_address}`);
+      if (existingData) {
+        console.log("Duplicate mac received: ", mac_address);
+        res.status(202).send(`Mac Address: ${mac_address} for model: ${model} already exists.`);
+      } else {
+        // Store the mac_address in the database
+        await collection.set(`${model}_${mac_address}`, { model, mac_address });
 
-// Delete an item
-app.delete('/:col/:key', async (req, res) => {
-  const col = req.params.col
-  const key = req.params.key
-  console.log(`from collection: ${col} delete key: ${key} with params ${JSON.stringify(req.params)}`)
-  const item = await db.collection(col).delete(key)
-  console.log(JSON.stringify(item, null, 2))
-  res.json(item).end()
-})
+        // Send a response indicating successful storage
+        const quantity = await collection.list();
+        var responseBody = `Successfully stored mac_address "${mac_address}", #${quantity} for model "${model}".\n`;
+        res.status(200).send(responseBody);
+        console.log(responseBody);
+      }
+    } catch (err) {
+      console.error("Failed to store the mac_address:", err);
+      res.status(500).send("Failed to store the mac_address.\n");
+    }
+  } else {
+    // Send an error response for invalid requests
+    res.status(400).send("Invalid request.\n");
+  }
+});
 
-// Get a single item
-app.get('/:col/:key', async (req, res) => {
-  const col = req.params.col
-  const key = req.params.key
-  console.log(`from collection: ${col} get key: ${key} with params ${JSON.stringify(req.params)}`)
-  const item = await db.collection(col).get(key)
-  console.log(JSON.stringify(item, null, 2))
-  res.json(item).end()
-})
+app.get("/count", async (req, res) => {
+  const { model } = req.query;
 
-// Get a full listing
-app.get('/:col', async (req, res) => {
-  const col = req.params.col
-  console.log(`list collection: ${col} with params: ${JSON.stringify(req.params)}`)
-  const items = await db.collection(col).list()
-  console.log(JSON.stringify(items, null, 2))
-  res.json(items).end()
-})
+  if (model) {
+    const collection = dynamoDB.collection("automobiles");
+
+    try {
+      // Count the number of mac_addresses for the model
+      const items = await collection.list();
+      const quantity = items.filter(item => item.model === model).length;
+      res.status(200).send(quantity.toString());
+    } catch (err) {
+      console.error("Failed to retrieve the count:", err);
+      res.status(500).send("Failed to retrieve the count.\n");
+    }
+  } else {
+    res.status(400).send("Provide model.\n");
+  }
+});
+
+app.get("/delete_all", async (_, res) => {
+  const collection = dynamoDB.collection("automobiles");
+
+  try {
+    // Delete all items from the collection
+    await collection.clear();
+    res.status(200).send("SUCCESS, all data cleared");
+  } catch (err) {
+    console.error("Failed to clear data:", err);
+    res.status(500).send("Failed to clear data.\n");
+  }
+});
 
 // Catch all handler for all other request.
 app.use('*', (req, res) => {
