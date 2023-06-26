@@ -55,9 +55,9 @@ app.get('/:model/:macKey', async (req, res) => {
     await db.collection(model).set(macKey, req.body)
     const items = await db.collection(model).list()
     console.log(items.results.length)
-  
+    console.log("macKey: " + macKey, "model: " + model)
     console.log(JSON.stringify(item, null, 2))
-    res.json({ macCount: items.results.length, macKey }).end()  
+    res.status(200).send("").end()
   }
 })
 
