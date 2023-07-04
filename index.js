@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const db = require('@cyclic.sh/dynamodb')
+const encryptTime = require('./encryptTime')
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -30,6 +31,21 @@ app.use(express.urlencoded({ extended: true }))
 //   console.log(JSON.stringify(item, null, 2))
 //   res.json(item).end()
 // })
+
+// Protected route using JWT authorization
+app.get('/auth', checkUser, (req, res) => {
+  // Code for handling the protected route
+  res.send('Protected route accessed successfully')
+
+  req.status(200).send("")
+})
+
+app.get('/code', checkUser, (req, res) => {
+  // Code for handling the protected route
+  res.send('Protected route accessed successfully')
+  var unblockerCode = encryptTime();
+  req.status(200).send(unblockerCode)
+})
 
 // Delete an item
 app.delete('/:model/:macKey', async (req, res) => {
