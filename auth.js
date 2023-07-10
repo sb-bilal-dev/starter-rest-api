@@ -21,6 +21,8 @@ function getUserToken(req, res) {
 
 // checkUser middleware
 function checkUser(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', "*");
+
   if (req.headers.authorization === "4321431513431") {
     next();
   } else {
