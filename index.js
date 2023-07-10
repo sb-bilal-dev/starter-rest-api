@@ -47,7 +47,7 @@ app.post('/auth', getUserToken)
 app.get('/code', checkUser, (req, res) => {
   // Code for handling the protected route
   var unblockerCode = encryptTime();
-  req.status(200).send(unblockerCode).end()
+  req.sendStatus(200).send(unblockerCode).end()
 })
 
 // Delete an item
