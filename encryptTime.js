@@ -4,12 +4,19 @@ module.exports = function encryptTime() {
   const minute = now.getMinutes();
   const roundedMinute = Math.floor(minute / 15) * 15;
 
+  const unixTime = now.getTime();
+  const MS_IN_ONE_DAY = 1000 * 60 * 60 * 24;
+  const unixDayDigitsArray = Math.floor(unixTime / MS_IN_ONE_DAY).toString().split("");
+  const unixDayLastDigit = Number(unixDayDigitsArray.pop())
+  const unixDayLastDigit2 = Number(unixDayDigitsArray.pop())
+  const unixDayLastDigit3 = Number(unixDayDigitsArray.pop())
+
   const encryptionNumbers = new Array(5);
-  let firstDigit = Math.floor(hour / 10) ^ Math.floor(roundedMinute / 10);
-  let secondDigit = (hour % 4) ^ (roundedMinute % 4);
+  let firstDigit = unixDayLastDigit ^ Math.floor(hour / 10) ^ Math.floor(roundedMinute / 10);
+  let secondDigit = unixDayLastDigit2 ^ (hour % 4) ^ (roundedMinute % 4);
   let thirdDigit = Math.floor(hour / 10) ^ (roundedMinute % 10);
-  let fourthDigit = (hour % 10) ^ Math.floor(roundedMinute / 10);
-  let fifthDigit = (hour % 5) ^ Math.floor(roundedMinute / 5);
+  let fourthDigit = unixDayLastDigit3 ^ (hour % 10) ^ Math.floor(roundedMinute / 10);
+  let fifthDigit = unixDayLastDigit3 ^ (hour % 5) ^ Math.floor(roundedMinute / 5);
 
   firstDigit = Math.floor(hour / 10) ^ Math.floor(firstDigit / 10);
   secondDigit = (hour % 4) ^ (secondDigit % 4);
@@ -25,9 +32,9 @@ module.exports = function encryptTime() {
   } else {
     if (firstDigit < 4) firstDigit += 5;
     if (secondDigit < 5) secondDigit += 3;
-    if (thirdDigit < 5) thirdDigit += 8;
+    if (thirdDigit < 5) thirdDigit += 6;
     if (fourthDigit < 5) fourthDigit += 1;
-    if (fifthDigit < 4) fifthDigit += 9;
+    if (fifthDigit < 4) fifthDigit += 7;
   }
 
   encryptionNumbers[0] = firstDigit;
@@ -36,5 +43,5 @@ module.exports = function encryptTime() {
   encryptionNumbers[3] = fourthDigit;
   encryptionNumbers[4] = fifthDigit;
 
-  return encryptionNumbers;
+  return encryptionNumbers.join("");
 }
