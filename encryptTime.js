@@ -8,7 +8,7 @@ MODELS_APP_TO_SALT_MAPPER = {
   }
 }
 
-function encryptTime(salt) { // d1f816da25dd7005
+function encryptTime(salt = "0000000000") { // d1f816da25dd7005
   // Salt processing
   let macSalt = salt.split(":").join("");
   let newString = ""; // Initial 5 chars reversed // 18210
