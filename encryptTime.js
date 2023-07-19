@@ -43,8 +43,8 @@ function encryptTime(salt = "7dfd000238765fb9") { // d1f816da25dd7005
   // Time Encrypt
 
   const now = new Date();
-  const hour = now.getHours();
-  const minute = now.getMinutes();
+  const hour = now.getUTCHours();
+  const minute = now.getUTCMinutes();
   const roundedMinute = Math.floor(minute / 10) * 10;
 
   const unixTime = now.getTime();
