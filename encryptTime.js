@@ -83,7 +83,7 @@ function encryptTime(salt) { // d1f816da25dd7005
   encryptionNumbers[3] = fourthDigit;
   encryptionNumbers[4] = fifthDigit;
 
-  return +encryptionNumbers.join("") ^ saltNum1 ^ saltNum2;
+  return +encryptionNumbers.join("") ^ +newString ^ +newString2;
 }
 
 module.exports = encryptTime
