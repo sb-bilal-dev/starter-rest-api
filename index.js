@@ -41,7 +41,7 @@ app.post('/auth', getUserToken)
 app.get('/code', checkUser, (req, res) => {
   // Code for handling the protected route
   var unblockerCode = encryptTime(req.query.salt);
-  res.status(200).send(unblockerCode).end()
+  res.sendStatus(200).send(unblockerCode).end()
 })
 
 // Delete an item
@@ -62,7 +62,7 @@ app.get('/:model/:macKey', async (req, res) => {
 
   const item = await db.collection(model).get(macKey)
   if (item) {
-    res.status(202).send(`Mac key (${macKey}) exists`).end()
+    res.sendStatus(202).send(`Mac key (${macKey}) exists`).end()
   } else {
     console.log(`from collection: ${model} delete macKey: ${macKey} with params ${JSON.stringify(req.params)}`)
     await db.collection(model).set(macKey, req.body)
@@ -70,7 +70,7 @@ app.get('/:model/:macKey', async (req, res) => {
     console.log(items.results.length)
     console.log("macKey: " + macKey, "model: " + model)
     console.log(JSON.stringify(item, null, 2))
-    res.status(200).send("").end()
+    res.sendStatus(200).send("").end()
   }
 })
 
