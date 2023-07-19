@@ -85,3 +85,5 @@ function encryptTime(salt) { // d1f816da25dd7005
 
   return +encryptionNumbers.join("") ^ saltNum1 ^ saltNum2;
 }
+
+module.exports = encryptTime
