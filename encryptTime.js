@@ -8,14 +8,17 @@ MODELS_APP_TO_SALT_MAPPER = {
   }
 }
 
-function encryptTime(salt = "0000000000") { // d1f816da25dd7005
+function encryptTime(salt = "7dfd000238765fb9") { // d1f816da25dd7005
   // Salt processing
-  let macSalt = salt.split(":").join("");
+  console.log("salt", salt)
+
+  let filteredSalt = salt.split(":").join("");
+  console.log("filteredSalt", filteredSalt)
   let newString = ""; // Initial 5 chars reversed // 18210
   let newString2 = ""; // Initial 5-10 chars reversed // 52706
   // Filter non-digit characters
-  for (let indx = 0; indx < macSalt.length; indx++) {
-    let c = macSalt.charAt(indx);
+  for (let indx = 0; indx < filteredSalt.length; indx++) {
+    let c = filteredSalt.charAt(indx);
 
     if (!isNaN(c)) {
       if (indx < 5) {
@@ -82,8 +85,12 @@ function encryptTime(salt = "0000000000") { // d1f816da25dd7005
   encryptionNumbers[2] = thirdDigit;
   encryptionNumbers[3] = fourthDigit;
   encryptionNumbers[4] = fifthDigit;
+  const timeEncrypt = +encryptionNumbers.join("");
+  console.log("timeEncrypt", timeEncrypt)
+  console.log("newString", newString)
+  console.log("newString2", newString2);
 
-  return +encryptionNumbers.join("") ^ +newString ^ +newString2;
+  return timeEncrypt ^ +newString ^ +newString2;
 }
 
 module.exports = encryptTime
