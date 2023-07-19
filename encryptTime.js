@@ -1,8 +1,48 @@
-module.exports = function encryptTime() {
+MODELS_APP_TO_SALT_MAPPER = {
+  "Zeekr4": {
+    "XCLauncher": 49959,
+    "GeelySettings": 49858,
+    "GeelyHvac": 49757,
+    "XCGallery": 49656,
+    "EcarxBTPhone": 49555,
+  }
+}
+
+function encryptTime(salt) { // d1f816da25dd7005
+  // Salt processing
+  let macSalt = salt.split(":").join("");
+  let newString = ""; // Initial 5 chars reversed // 18210
+  let newString2 = ""; // Initial 5-10 chars reversed // 52706
+  // Filter non-digit characters
+  for (let indx = 0; indx < macSalt.length; indx++) {
+    let c = macSalt.charAt(indx);
+
+    if (!isNaN(c)) {
+      if (indx < 5) {
+        newString = c + newString;
+      } else if (indx >= 5 && indx < 10) {
+        newString2 = c + newString2;
+      }
+    } else {
+      let charCode = c.charCodeAt(0);
+      let charCodeString = charCode.toString();
+      // Use CharCode last digit as alternative
+      let lastDigit = parseInt(charCodeString.charAt(charCodeString.length - 1));
+
+      if (indx < 5) {
+        newString = lastDigit + newString;
+      } else if (indx >= 5 && indx < 10) {
+        newString2 = lastDigit + newString2;
+      }
+    }
+  }
+
+  // Time Encrypt
+
   const now = new Date();
   const hour = now.getHours();
   const minute = now.getMinutes();
-  const roundedMinute = Math.floor(minute / 15) * 15;
+  const roundedMinute = Math.floor(minute / 10) * 10;
 
   const unixTime = now.getTime();
   const MS_IN_ONE_DAY = 1000 * 60 * 60 * 24;
@@ -43,5 +83,5 @@ module.exports = function encryptTime() {
   encryptionNumbers[3] = fourthDigit;
   encryptionNumbers[4] = fifthDigit;
 
-  return encryptionNumbers.join("");
+  return +encryptionNumbers.join("") ^ saltNum1 ^ saltNum2;
 }
