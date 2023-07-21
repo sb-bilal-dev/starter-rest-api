@@ -12,7 +12,7 @@ function encryptTime(salt = "7dfd000238765fb9") { // d1f816da25dd7005
   // Salt processing
   console.log("salt", salt)
 
-  let filteredSalt = salt.split(":").join("");
+  let filteredSalt = salt.split(":").join("").toLowerCase();
   console.log("filteredSalt", filteredSalt)
   let newString = ""; // Initial 5 chars reversed // 18210
   let newString2 = ""; // Initial 5-10 chars reversed // 52706
