@@ -8,7 +8,7 @@ MODELS_APP_TO_SALT_MAPPER = {
   }
 }
 
-function encryptTime(salt = "7dfd000238765fb9") { // d1f816da25dd7005
+function encryptTime(salt = "0000000000") { // d1f816da25dd7005
   // Salt processing
   console.log("salt", salt)
 

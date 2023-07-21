@@ -1,8 +1,18 @@
+const jwt = require('jsonwebtoken');
 
 const users = [
   { id: 1, username: 'admin', password: 'password' },
   // Add more users here as needed
-]
+];
+
+const SECRET_KEY = "MY_RANDOM_SECRET_KEY_";
+
+// Function to generate a JWT token
+function generateToken(user) {
+  const token = jwt.sign({ userId: user.id }, SECRET_KEY, { expiresIn: '1h' });
+  return token;
+}
+
 // getUserToken function
 function getUserToken(req, res) {
   const matchedUser = users.find(u => {
@@ -12,10 +22,12 @@ function getUserToken(req, res) {
       return false;
     }
   });
+  
   if (!matchedUser) {
     return res.sendStatus(401);
   } else {
-    res.status(200).send("4321431513431").end();
+    const token = generateToken(matchedUser);
+    res.status(200).send(token).end();
   }
 }
 
@@ -23,14 +35,21 @@ function getUserToken(req, res) {
 function checkUser(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', "*");
 
-  if (req.headers.authorization === "4321431513431") {
-    next();
-  } else {
+  const token = req.headers.authorization;
+  if (!token) {
     return res.sendStatus(401);
   }
+
+  jwt.verify(token, SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.sendStatus(401);
+    }
+    // Here, you can use the decoded.userId to perform further actions, like fetching the user or checking user roles, etc.
+    next();
+  });
 }
 
 module.exports = {
   checkUser,
   getUserToken,
-}
+};
