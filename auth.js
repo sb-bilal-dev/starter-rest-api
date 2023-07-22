@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const users = [
   { id: 1, username: 'admin', password: 'password' },
+  { id: 2, username: 'demodemo', password: 'demodemo' },
   // Add more users here as needed
 ];
 
@@ -44,8 +45,9 @@ function checkUser(req, res, next) {
     if (err) {
       return res.sendStatus(401);
     }
+    console.log("decoded", decoded);
     // Here, you can use the decoded.userId to perform further actions, like fetching the user or checking user roles, etc.
-    next();
+    next(decoded);
   });
 }
 

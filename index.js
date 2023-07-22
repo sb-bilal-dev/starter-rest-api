@@ -35,55 +35,69 @@ app.use(express.urlencoded({ extended: true }))
 //   res.json(item).end()
 // })
 
+async function storeWin(macAddress, win, userID) {
+  const newWincode = {
+    updateTime: new Date().getTime(),
+    win,
+    userID,
+    note,
+    assignee,
+  }
+  const item = await db.collection("wincodes").set(macAddress, newWincode)
+  console.log(JSON.stringify(item, null, 2))
+  res.json(item).end()
+}
+
 // Protected route using JWT authorization
 app.post('/auth', getUserToken)
 
 app.get('/code', checkUser, (req, res) => {
   // Code for handling the protected route
   var unblockerCode = encryptTime(req.query.salt);
+  storeWin(req.query.salt, req.query.win, 1)
   res.statusMessage = unblockerCode;
   res.json([unblockerCode]).status(200).end()
 })
 
 // Delete an item
-app.delete('/:model/:macKey', async (req, res) => {
-  const model = req.params.model
-  const macKey = req.params.macKey
-  console.log(`from collection: ${model} delete macKey: ${macKey} with params ${JSON.stringify(req.params)}`)
-  const item = await db.collection(model).delete(macKey)
-  console.log(JSON.stringify(item, null, 2))
-  res.json(item).end()
-})
+// app.delete('/:model/:macKey', async (req, res) => {
+//   const model = req.params.model
+//   const macKey = req.params.macKey
+//   console.log(`from collection: ${model} delete macKey: ${macKey} with params ${JSON.stringify(req.params)}`)
+//   const item = await db.collection(model).delete(macKey)
+//   console.log(JSON.stringify(item, null, 2))
+//   res.json(item).end()
+// })
 
-// Get a single item
-app.get('/:model/:macKey', async (req, res) => {
-  console.log(req.body)
-  const model = req.params.model
-  const macKey = req.params.macKey
+// // Get a single item
+// app.get('/:model/:macKey', async (req, res) => {
+//   console.log(req.body)
+//   const model = req.params.model
+//   const macKey = req.params.macKey
 
-  const item = await db.collection(model).get(macKey)
-  if (item) {
-    res.status(202).send(`Mac key (${macKey}) exists`).end()
-  } else {
-    console.log(`from collection: ${model} delete macKey: ${macKey} with params ${JSON.stringify(req.params)}`)
-    await db.collection(model).set(macKey, req.body)
-    const items = await db.collection(model).list()
-    console.log(items.results.length)
-    console.log("macKey: " + macKey, "model: " + model)
-    console.log(JSON.stringify(item, null, 2))
-    res.status(200).send("").end()
-  }
-})
+//   const item = await db.collection(model).get(macKey)
+//   if (item) {
+//     res.status(202).send(`Mac key (${macKey}) exists`).end()
+//   } else {
+//     console.log(`from collection: ${model} delete macKey: ${macKey} with params ${JSON.stringify(req.params)}`)
+//     await db.collection(model).set(macKey, req.body)
+//     const items = await db.collection(model).list()
+//     console.log(items.results.length)
+//     console.log("macKey: " + macKey, "model: " + model)
+//     console.log(JSON.stringify(item, null, 2))
+//     res.status(200).send("").end()
+//   }
+// })
 
-// Get a full listing
-app.get('/:model', async (req, res) => {
-  const model = req.params.model
+// // Get a full listing
+// app.get('/:model', async (req, res) => {
+//   const model = req.params.model
 
-  console.log(`list collection: ${model} with params: ${JSON.stringify(req.params)}`)
-  const items = await db.collection(model).list()
-  console.log(items.results.length)
-  res.json({ macCount: items.results.length, items }).end()
-})
+//   console.log(`list collection: ${model} with params: ${JSON.stringify(req.params)}`)
+//   const items = await db.collection(model).list()
+//   console.log(items.results.length)
+//   res.json({ macCount: items.results.length, items }).end()
+// })
 
 // Catch all handler for all other request.
 app.use('*', (req, res) => {
