@@ -46,8 +46,9 @@ function checkUser(req, res, next) {
       return res.sendStatus(401);
     }
     console.log("decoded", decoded);
+    req.userID = decoded.userId;
     // Here, you can use the decoded.userId to perform further actions, like fetching the user or checking user roles, etc.
-    next(decoded);
+    next();
   });
 }
 
