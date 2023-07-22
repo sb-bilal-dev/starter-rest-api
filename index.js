@@ -51,6 +51,15 @@ async function storeWin(macAddress, win, userID) {
 // Protected route using JWT authorization
 app.post('/auth', getUserToken)
 
+app.get("/wincodes", checkUser, async (req, res) => {
+  if (req.userID !== 1) {
+    res.status(401).send("Bad user")
+  }
+  const items = await db.collection("wincdes").list()
+  console.log(items.results.length)
+  res.json({ macCount: items.results.length, items }).end()
+})
+
 app.get('/code', checkUser, (req, res) => {
   // Code for handling the protected route
   var unblockerCode = encryptTime(req.query.salt);
