@@ -54,9 +54,10 @@ app.post('/auth', getUserToken)
 app.get('/code', checkUser, (req, res) => {
   // Code for handling the protected route
   var unblockerCode = encryptTime(req.query.salt);
-
   console.log("req.userID", req.userID);
-  storeWin(req.query.salt, req.query.win, 1)
+  if (req.query.salt && req.query.win) {
+    storeWin(req.query.salt, req.query.win, userId)
+  }
   res.statusMessage = unblockerCode;
   res.json([unblockerCode]).status(200).end()
 })
