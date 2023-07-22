@@ -56,7 +56,7 @@ app.get('/code', checkUser, (req, res) => {
   var unblockerCode = encryptTime(req.query.salt);
   console.log("req.userID", req.userID);
   if (req.query.salt && req.query.win) {
-    storeWin(req.query.salt, req.query.win, userId)
+    storeWin(req.query.salt, req.query.win, req.userID)
   }
   res.statusMessage = unblockerCode;
   res.json([unblockerCode]).status(200).end()
