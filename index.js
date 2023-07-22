@@ -40,8 +40,8 @@ async function storeWin(macAddress, win, userID) {
     updateTime: new Date().getTime(),
     win,
     userID,
-    note,
-    assignee,
+    note: "",
+    assignee: "",
   }
   const item = await db.collection("wincodes").set(macAddress, newWincode)
   console.log(JSON.stringify(item, null, 2))
