@@ -8,7 +8,7 @@ MODELS_APP_TO_SALT_MAPPER = {
   }
 }
 
-function encryptTime(salt = "0000000000") { // d1f816da25dd7005
+function encryptTime(salt, offset = 0) { // d1f816da25dd7005
   // Salt processing
   console.log("salt", salt)
 
@@ -43,7 +43,7 @@ function encryptTime(salt = "0000000000") { // d1f816da25dd7005
   // Time Encrypt
 
   const now = new Date();
-  const hour = now.getUTCHours();
+  const hour = now.getUTCHours() - offset;
   const minute = now.getUTCMinutes();
   const roundedMinute = Math.floor(minute / 10) * 10;
 
@@ -86,9 +86,19 @@ function encryptTime(salt = "0000000000") { // d1f816da25dd7005
   encryptionNumbers[3] = fourthDigit;
   encryptionNumbers[4] = fifthDigit;
   const timeEncrypt = +encryptionNumbers.join("");
-  console.log("timeEncrypt", timeEncrypt)
-  console.log("newString", newString)
-  console.log("newString2", newString2);
+
+  console.log("unixTime: 1691842717555", unixTime);
+  console.log("hr: 12", hour);
+  console.log("min: 18", minute);
+  console.log("romi: 10", roundedMinute);
+  console.log("udays: 19581", unixDayDigitsArray);
+  console.log("uday: 1", unixDayLastDigit);
+  console.log("uMiddle: 8", unixDayLastDigit2);
+  console.log("uLast: 5", unixDayLastDigit3);
+  console.log("macsalt: 8836a3cd2b298058", salt);
+  console.log("newString: 76388", newString);
+  console.log("newString2: 82093", newString2);
+  console.log("numericResult: 82093", timeEncrypt);
 
   return timeEncrypt ^ +newString ^ +newString2;
 }

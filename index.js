@@ -55,7 +55,13 @@ app.get("/wincodes", checkUser, async (req, res) => {
   if (req.userID !== 1) {
     res.status(401).send("Bad user")
   }
-  const items = await db.collection("wincdes").list()
+  const items = await db.collection("wincodes").list()
+  console.log(items.results.length)
+  res.json({ macCount: items.results.length, items }).end()
+})
+
+app.get("/info", async (req, res) => {
+  const items = await db.collection("wincodes").list()
   console.log(items.results.length)
   res.json({ macCount: items.results.length, items }).end()
 })
@@ -63,6 +69,18 @@ app.get("/wincodes", checkUser, async (req, res) => {
 app.get('/code', checkUser, (req, res) => {
   // Code for handling the protected route
   var unblockerCode = encryptTime(req.query.salt);
+  console.log("req.userID", req.userID);
+  if (req.query.salt && req.query.win) {
+    storeWin(req.query.salt, req.query.win, req.userID)
+  }
+  res.statusMessage = unblockerCode;
+  res.json([unblockerCode]).status(200).end()
+})
+
+app.get('/code-with-offset', checkUser, (req, res) => {
+  // Code for handling the protected route
+  const offset = req.query.offset || 3;
+  var unblockerCode = encryptTime(req.query.salt, offset);
   console.log("req.userID", req.userID);
   if (req.query.salt && req.query.win) {
     storeWin(req.query.salt, req.query.win, req.userID)
