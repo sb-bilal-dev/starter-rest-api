@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const users = [
   { id: 1, username: 'admin', password: 'password' },
   { id: 2, username: 'demodemo', password: 'demodemo' },
+  { id: 2, username: 'Alexey', password: 'Alex123' },
   // Add more users here as needed
 ];
 
