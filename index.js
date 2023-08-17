@@ -40,6 +40,7 @@ async function storeWin(macAddress, win, userID) {
     updateTime: new Date().getTime(),
     win,
     userID,
+    mac: macAddress,
     note: "",
     assignee: "",
   }
@@ -52,9 +53,9 @@ async function storeWin(macAddress, win, userID) {
 app.post('/auth', getUserToken)
 
 app.get("/wincodes", checkUser, async (req, res) => {
-  if (req.userID !== 1) {
-    res.status(401).send("Bad user")
-  }
+  // if (req.userID !== 1) {
+  //   res.status(401).send("Bad user")
+  // }
   const items = await db.collection("wincodes").list()
   console.log(items.results.length)
   res.json({ macCount: items.results.length, items }).end()
